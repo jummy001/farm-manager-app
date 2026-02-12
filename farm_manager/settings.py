@@ -5,12 +5,15 @@ from django.contrib.messages import constants as messages
 # Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY (for learning only)
-SECRET_KEY = 'django-insecure-change-this-later'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key')
 
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '.onrender.com',
+]
 
 # Applications
 INSTALLED_APPS = [
@@ -31,6 +34,9 @@ INSTALLED_APPS = [
 # Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # 👈 ADD THIS
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -38,6 +44,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 # URLs
 ROOT_URLCONF = 'farm_manager.urls'
@@ -87,6 +94,9 @@ USE_TZ = True
 # Static & media files
 STATIC_URL = '/static/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # 👈 ADD THIS
+
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -105,3 +115,9 @@ MESSAGE_TAGS = {
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
+
+
+# Production Security Settings
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.onrender.com',
+]
