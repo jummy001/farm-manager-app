@@ -1,0 +1,102 @@
+{% extends 'products/base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Dashboard</h1>
+
+<div class="row g-4 mb-4">
+
+    <!-- Total Products -->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 text-white bg-primary h-100">
+            <div class="card-body">
+                <h5>Total Products</h5>
+                <p class="display-5">{{ total_products }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Categories -->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 text-white bg-success h-100">
+            <div class="card-body">
+                <h5>Total Categories</h5>
+                <p class="display-5">{{ total_categories }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Low Stock -->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 text-white bg-danger h-100">
+            <div class="card-body">
+                <h5>Low Stock</h5>
+                <p class="display-5">{{ low_stock_products.count }}</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<hr>
+
+<!-- Low Stock Table -->
+{% if low_stock_products %}
+<h3 class="mt-4">Low Stock Details</h3>
+
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Name</th>
+            <th>Quantity</th>
+            <th>Category</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in low_stock_products %}
+        <tr>
+            <td>{{ product.name }}</td>
+            <td>{{ product.quantity }}</td>
+            <td>{{ product.category.name }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<hr class="my-4">
+
+<!-- Chart Section (OUTSIDE TABLE ✅) -->
+<h3>Products Per Category</h3>
+
+<canvas id="categoryChart"></canvas>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const labels = {{ labels|safe }};
+const data = {{ data|safe }};
+
+const ctx = document.getElementById('categoryChart');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Number of Products',
+            data: data,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+{% endblock %}
